@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Predictor</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #3498db 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 90%;
+            min-width: 320px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #ecf0f1;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            color: #bdc3c7;
+        }
+        
+        .form-container {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid #e9ecef;
+        }
+        
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        label::after {
+            content: " *";
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        select, input[type="number"] {
+            padding: 14px 18px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #2c3e50;
+        }
+        
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        select:hover, input[type="number"]:hover {
+            border-color: #bdc3c7;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 0 auto;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .output-section {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .predicted-price {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 20px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 6px;
+            display: none;
+        }
+        
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+        
+        .form-group.error .error-message {
+            display: block;
+        }
+        
+        .form-group.success input,
+        .form-group.success select {
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 700px;
+                width: 85%;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                max-width: 650px;
+                width: 90%;
+            }
+            
+            .form-container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                max-width: 95%;
+                width: 95%;
+                padding: 0 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+            
+            .form-grid {
+                gap: 18px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .form-grid {
+                gap: 16px;
+            }
+            
+            select, input[type="number"] {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+            
+            .submit-btn {
+                padding: 14px 28px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .form-container {
+                padding: 18px;
+            }
+            
+            .form-grid {
+                gap: 14px;
+            }
+            
+            label {
+                font-size: 0.95rem;
+                margin-bottom: 6px;
+            }
+            
+            select, input[type="number"] {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+            
+            .submit-btn {
+                padding: 12px 24px;
+                font-size: 0.95rem;
+                border-radius: 10px;
+            }
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Car Price Predictor</h1>
+            <p>Professional ML-based Car Price Prediction System</p>
+        </div>
+
+        <!-- Prediction Form -->
+        <div class="form-container">
+            <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px; font-size: 1.5rem;">Predict Car Price</h2>
+            <form id="priceForm" method="post" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-grid">
+                    <div class="form-group" id="brandGroup">
+                        <label for="brand">Select Brand</label>
+                        <select id="brand" name="brand" required>
+                            <option value="">Choose Brand</option>
+                        </select>
+                        <div class="error-message" id="brandError">Please select a brand</div>
+                    </div>
+
+                    <div class="form-group" id="modelGroup">
+                        <label for="model">Select Model</label>
+                        <select id="model" name="model" required>
+                            <option value="">Choose Model</option>
+                        </select>
+                        <div class="error-message" id="modelError">Please select a model</div>
+                    </div>
+
+                    <div class="form-group" id="yearGroup">
+                        <label for="year">Enter Year of Purchase</label>
+                        <input type="number" id="year" name="year" placeholder="Enter year (1990-2021)" min="1990" max="2021" required>
+                        <div class="error-message" id="yearError">Please enter a valid year between 1990-2021</div>
+                    </div>
+
+                    <div class="form-group" id="fuelGroup">
+                        <label for="fuel">Select Fuel Type</label>
+                        <select id="fuel" name="fuel" required>
+                            <option value="">Choose Fuel Type</option>
+                        </select>
+                        <div class="error-message" id="fuelError">Please select a fuel type</div>
+                    </div>
+
+                    <div class="form-group" id="kmGroup">
+                        <label for="km">Enter Distance Travelled (KMs)</label>
+                        <input type="number" id="km" name="km" placeholder="Enter kilometers" min="0" max="500000" required>
+                        <div class="error-message" id="kmError">Please enter valid kilometers (0-500,000)</div>
+                    </div>
+
+                    <div class="form-group" id="cityGroup">
+                        <label for="city">Select City</label>
+                        <select id="city" name="city" required>
+                            <option value="">Choose City</option>
+                        </select>
+                        <div class="error-message" id="cityError">Please select a city</option>
+                        </select>
+                        <div class="error-message" id="cityError">Please select a city</div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="submit-btn">🔮 Predict Price</button>
+            </form>
+        </div>
+
+        <!-- Prediction Output -->
+        <div class="output-section" id="output" style="display: none;">
+            <h2 style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">Predicted Car Price</h2>
+            <div class="predicted-price" id="predictedPrice">₹0</div>
+            <p style="color: #7f8c8d; margin: 0; font-size: 1rem;">Based on your input parameters</p>
+        </div>
+    </div>
+
+    <script>
+        // Essential data for dropdowns
+        const brands = [
+            { name: "Maruti Suzuki", count: 221 },
+            { name: "Hyundai", count: 214 },
+            { name: "Honda", count: 117 },
+            { name: "Mercedes-Benz", count: 107 },
+            { name: "Toyota", count: 88 },
+            { name: "BMW", count: 79 },
+            { name: "Audi", count: 72 },
+            { name: "Mahindra", count: 67 },
+            { name: "Volkswagen", count: 45 },
+            { name: "Renault", count: 42 },
+            { name: "Skoda", count: 38 },
+            { name: "Tata", count: 35 },
+            { name: "Ford", count: 32 },
+            { name: "Nissan", count: 28 },
+            { name: "Land Rover", count: 25 },
+            { name: "Jaguar", count: 22 },
+            { name: "Mitsubishi", count: 18 },
+            { name: "Lexus", count: 15 },
+            { name: "MINI", count: 12 },
+            { name: "Porsche", count: 10 },
+            { name: "Bentley", count: 8 },
+            { name: "Lamborghini", count: 6 },
+            { name: "Jeep", count: 5 },
+            { name: "Kia", count: 4 },
+            { name: "MG", count: 3 },
+            { name: "Volvo", count: 3 },
+            { name: "Mahindra-Renault", count: 2 },
+            { name: "Abarth", count: 1 },
+            { name: "Fiat", count: 1 },
+            { name: "Force", count: 1 }
+        ];
+
+        const models = [
+            { name: "Swift", count: 50 },
+            { name: "Creta", count: 45 },
+            { name: "Fortuner", count: 42 },
+            { name: "E-Class", count: 38 },
+            { name: "Innova", count: 35 },
+            { name: "City", count: 32 },
+            { name: "Baleno", count: 30 },
+            { name: "XUV500", count: 28 },
+            { name: "Verna", count: 25 },
+            { name: "i20", count: 22 },
+            { name: "GLA", count: 20 },
+            { name: "Q5", count: 18 },
+            { name: "X1", count: 16 },
+            { name: "Corolla", count: 15 },
+            { name: "Polo", count: 14 },
+            { name: "Rapid", count: 12 },
+            { name: "Endeavour", count: 10 },
+            { name: "Evoque", count: 8 },
+            { name: "S-Class", count: 6 },
+            { name: "Gallardo", count: 4 }
+        ];
+
+        const fuelTypes = [
+            { name: "Diesel", count: 686 },
+            { name: "Petrol", count: 596 },
+            { name: "Petrol + 1", count: 7 },
+            { name: "CNG + 1", count: 7 },
+            { name: "Hybrid", count: 1 }
+        ];
+
+        const cities = [
+            { name: "Mumbai", count: 238 },
+            { name: "Chennai", count: 228 },
+            { name: "Pune", count: 222 },
+            { name: "Bangalore", count: 180 },
+            { name: "Delhi", count: 175 },
+            { name: "Hyderabad", count: 165 },
+            { name: "Noida", count: 140 },
+            { name: "Gurgaon", count: 135 },
+            { name: "Thane", count: 130 },
+            { name: "Navi Mumbai", count: 125 },
+            { name: "Faridabad", count: 120 },
+            { name: "Ghaziabad", count: 115 },
+            { name: "Lucknow", count: 110 },
+            { name: "Agra", count: 105 },
+            { name: "Dehradun", count: 100 }
+        ];
+
+        // Populate dropdowns
+        function populateDropdown(id, data, placeholder = "Choose option") {
+            const dropdown = document.getElementById(id);
+            dropdown.innerHTML = `<option value="">${placeholder}</option>`;
+            data.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.name;
+                option.textContent = `${item.name} (${item.count})`;
+                dropdown.appendChild(option);
+            });
+        }
+
+        // Form validation functions
+        function validateField(fieldId, errorId, groupId, validationFn) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            const group = document.getElementById(groupId);
+            const value = field.value.trim();
+            
+            if (validationFn(value)) {
+                group.classList.remove('error');
+                group.classList.add('success');
+                return true;
+            } else {
+                group.classList.remove('success');
+                group.classList.add('error');
+                return false;
+            }
+        }
+
+        function validateRequired(value) {
+            return value !== '';
+        }
+
+        function validateYear(value) {
+            const year = parseInt(value);
+            return !isNaN(year) && year >= 1990 && year <= 2021;
+        }
+
+        function validateKm(value) {
+            const km = parseInt(value);
+            return !isNaN(km) && km >= 0 && km <= 500000;
+        }
+
+        function validateForm() {
+            let isValid = true;
+            
+            isValid = validateField('brand', 'brandError', 'brandGroup', validateRequired) && isValid;
+            isValid = validateField('model', 'modelError', 'modelGroup', validateRequired) && isValid;
+            isValid = validateField('year', 'yearError', 'yearGroup', validateYear) && isValid;
+            isValid = validateField('fuel', 'fuelError', 'fuelGroup', validateRequired) && isValid;
+            isValid = validateField('km', 'kmError', 'kmGroup', validateKm) && isValid;
+            isValid = validateField('city', 'cityError', 'cityGroup', validateRequired) && isValid;
+            
+            return isValid;
+        }
+
+        // Initialize page
+        $(document).ready(function () {
+            populateDropdown("brand", brands, "Choose Brand");
+            populateDropdown("model", models, "Choose Model");
+            populateDropdown("fuel", fuelTypes, "Choose Fuel Type");
+            populateDropdown("city", cities, "Choose City");
+
+            // Real-time validation
+            $('#brand, #model, #fuel, #city').on('change', function() {
+                const fieldId = this.id;
+                const errorId = fieldId + 'Error';
+                const groupId = fieldId + 'Group';
+                validateField(fieldId, errorId, groupId, validateRequired);
+            });
+
+            $('#year').on('input', function() {
+                validateField('year', 'yearError', 'yearGroup', validateYear);
+            });
+
+            $('#km').on('input', function() {
+                validateField('km', 'kmError', 'kmGroup', validateKm);
+            });
+
+            // Handle form submission
+            $("#priceForm").on("submit", function (event) {
+                event.preventDefault();
+                
+                if (!validateForm()) {
+                    return false;
+                }
+
+                const submitBtn = $("#submitBtn");
+                submitBtn.prop('disabled', true).text('Processing...');
+
+                const formData = {
+                    brand: $("#brand").val(),
+                    model: $("#model").val(),
+                    year: $("#year").val(),
+                    fuel: $("#fuel").val(),
+                    km: $("#km").val(),
+                    city: $("#city").val(),
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "carpriceprediction" %}',
+                    data: formData,
+                    success: function (response) {
+                        if (response.predicted_price) {
+                            $("#predictedPrice").text("₹" + response.predicted_price.toLocaleString());
+                            $("#output").show();
+                        } else if (response.error) {
+                            alert("Error: " + response.error);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    },
+                    complete: function() {
+                        submitBtn.prop('disabled', false).text('🔮 Predict Price');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
