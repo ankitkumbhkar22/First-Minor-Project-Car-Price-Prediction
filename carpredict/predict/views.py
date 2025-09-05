@@ -14,7 +14,6 @@ from django.conf import settings
 from django.http import JsonResponse 
 
 
-
 model=None
 model_path = os.path.join(settings.BASE_DIR, 'car_price_prediction.pkl')
 with open(model_path, 'rb') as file:
